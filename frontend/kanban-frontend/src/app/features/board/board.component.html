@@ -1,0 +1,97 @@
+@if (project()) {
+  <div class="kanban-container">
+    <header class="board-header">
+      <h1>Ordena tus tareas</h1>
+      <p>Aqui podras organizar y gestionar todas tus tareas por orden de prioridad</p>
+    </header>
+    <button (click)="cerrarSesion()" class="btn-logout">
+      Cerrar Sesión
+    </button>
+
+    <form [formGroup]="taskForm" (ngSubmit)="onSubmitTask()" class="quick-task-form">
+      <input type="text" formControlName="title" placeholder="Nueva tarea... (ej: Diseñar Navbar)" class="form-input" />
+      <input type="text" formControlName="description" placeholder="Descripción (opcional)" class="form-input" />
+      <select formControlName="priority" class="form-select">
+        <option value="LOW">Baja</option>
+        <option value="MEDIUM">Media</option>
+        <option value="HIGH">Alta</option>
+      </select>
+      <button type="submit" [disabled]="taskForm.invalid || isEditMode" class="form-btn">{{ isEditMode ? 'Editando...' : 'Añadir' }}</button>
+    </form>
+
+    <div class="columns-container" cdkDropListGroup>
+      @for (column of project()?.columns; track column.id) {
+        <div class="column-wrapper">
+          <div class="column-header">
+            <h3>{{ column.title }}</h3>
+            <span class="task-count">{{ column.tasks.length }}</span>
+          </div>
+
+          <div
+            class="tasks-list"
+            cdkDropList
+            [cdkDropListData]="column.tasks"
+            [id]="column.id.toString()"
+            (cdkDropListDropped)="onTrackDrop($event)">
+
+            @for (task of column.tasks; track task.id) {
+              <div class="task-card" cdkDrag [class.is-deleting]="deletingTaskId() === task.id">
+                <div class="task-header">
+                  <h4>{{ task.title }}</h4>
+                  <div class="task-actions">
+                    <button class="edit-btn" (click)="openEditModal(task)" title="Editar tarea">✏️</button>
+
+                    @if (deletingTaskId() === task.id) {
+                      <span class="deleting-loader">Eliminando...</span>
+                    } @else {
+                      <button class="delete-btn" (click)="openDeleteModal(task)" title="Eliminar tarea">🗑️</button>
+                    }
+                  </div>
+                </div>
+                <p>{{ task.description }}</p>
+                <span [className]="'priority-badge ' + task.priority.toLowerCase()">
+                  {{ task.priority }}
+                </span>
+              </div>
+            } @empty {
+              <div class="empty-placeholder">Suelta tareas aquí</div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (showModal) {
+      <div class="modal-overlay">
+        <div class="modal-content">
+          @if (isEditMode) {
+            <h3>Editar Tarea</h3>
+            <form [formGroup]="taskForm" class="modal-form">
+              <input formControlName="title" class="form-input" />
+              <textarea formControlName="description" class="form-input"></textarea>
+              <select formControlName="priority" class="form-select">
+                <option value="LOW">Baja</option>
+                <option value="MEDIUM">Media</option>
+                <option value="HIGH">Alta</option>
+              </select>
+            </form>
+          } @else {
+            <h3>¿Eliminar tarea?</h3>
+            <p>¿Seguro que quieres eliminar esta tarea?</p>
+          }
+
+          <div class="modal-actions">
+            <button type="button" class="btn-cancel" (click)="closeModal()">Cancelar</button>
+            <button type="button" class="btn-confirm" (click)="confirmAction()">
+              {{ isEditMode ? 'Guardar cambios' : 'Sí, eliminar' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="loading-spinner">
+    <p>Conectando con la base de datos en la nube (Neon)...</p>
+  </div>
+}

@@ -1,0 +1,25 @@
+<div class="auth-container">
+  <h2>Crear cuenta en KanbanSync</h2>
+  <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+    <div class="form-group">
+      <label>Email:</label>
+      <input formControlName="email" type="email">
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña:</label>
+      <input formControlName="password" type="password">
+    </div>
+
+    <button type="submit" [disabled]="registerForm.invalid">Registrarse</button>
+    <p>¿Ya tienes una cuenta? <a routerLink="/login">Inicia sesión</a></p>
+  </form>
+  @if (errorMessage) {
+    <div class="error-message">{{ errorMessage }}</div>
+  }
+</div>
+
+
+
+
+
