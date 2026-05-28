@@ -39,3 +39,15 @@ a {
   color: #007bff;
   text-decoration: none;
 }
+
+
+/* Tu estilo existente para .error-message seguramente es rojo */
+.error-message {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+  font-size: 14px;
+}

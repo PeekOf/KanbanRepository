@@ -1,6 +1,10 @@
 <div class="auth-container">
   <h2>Bienvenido a KanbanSync</h2>
 
+  @if (errorMessage) {
+    <div class="error-message">⚠️ {{ errorMessage }}</div>
+  }
+
   <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label>Email:</label>
